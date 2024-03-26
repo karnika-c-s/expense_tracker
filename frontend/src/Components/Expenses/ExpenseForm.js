@@ -1,69 +1,73 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
-import DatePicker from 'react-datepicker'
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useGlobalContext } from '../../context/globalContext';
 import Button from '../Button/Button';
-import { plus } from '../../utils/Icons';
-
+import { plus, sadFace } from '../../utils/Icons'; // Import sad face icon
 
 function ExpenseForm() {
-    const {addExpense, error, setError} = useGlobalContext()
+    const { addExpense, error, setError } = useGlobalContext();
     const [inputState, setInputState] = useState({
         title: '',
         amount: '',
         date: '',
         category: '',
         description: '',
-    })
+    });
+    const [showSadFace, setShowSadFace] = useState(false); // State to control the display of sad face emoji
 
-    const { title, amount, date, category,description } = inputState;
+    const { title, amount, date, category, description } = inputState;
 
     const handleInput = name => e => {
-        setInputState({...inputState, [name]: e.target.value})
-        setError('')
-    }
+        setInputState({ ...inputState, [name]: e.target.value });
+        setError('');
+    };
 
     const handleSubmit = e => {
-        e.preventDefault()
-        addExpense(inputState)
+        e.preventDefault();
+        addExpense(inputState);
         setInputState({
             title: '',
             amount: '',
             date: '',
             category: '',
             description: '',
-        })
-    }
+        });
+        setShowSadFace(true); // Display sad face emoji when expense is added
+        setTimeout(() => {
+            setShowSadFace(false); // Hide sad face emoji after 2 seconds
+        }, 2000);
+    };
 
     return (
         <ExpenseFormStyled onSubmit={handleSubmit}>
             {error && <p className='error'>{error}</p>}
             <div className="input-control">
-                <input 
-                    type="text" 
+                <input
+                    type="text"
                     value={title}
-                    name={'title'} 
+                    name={'title'}
                     placeholder="Expense Title"
                     onChange={handleInput('title')}
                 />
             </div>
             <div className="input-control">
-                <input value={amount}  
-                    type="text" 
-                    name={'amount'} 
+                <input value={amount}
+                    type="text"
+                    name={'amount'}
                     placeholder={'Expense Amount'}
-                    onChange={handleInput('amount')} 
+                    onChange={handleInput('amount')}
                 />
             </div>
             <div className="input-control">
-                <DatePicker 
+                <DatePicker
                     id='date'
                     placeholderText='Enter A Date'
                     selected={date}
                     dateFormat="dd/MM/yyyy"
                     onChange={(date) => {
-                        setInputState({...inputState, date: date})
+                        setInputState({ ...inputState, date: date });
                     }}
                 />
             </div>
@@ -75,21 +79,21 @@ function ExpenseForm() {
                     <option value="health">Health</option>
                     <option value="subscriptions">Subscriptions</option>
                     <option value="takeaways">Takeaways</option>
-                    <option value="clothing">Clothing</option>  
-                    <option value="travelling">Travelling</option>  
-                    <option value="other">Other</option>  
+                    <option value="clothing">Clothing</option>
+                    <option value="travelling">Travelling</option>
+                    <option value="other">Other</option>
                 </select>
             </div>
             <div className="input-control">
                 <textarea name="description" value={description} placeholder='Add A Reference' id="description" cols="30" rows="4" onChange={handleInput('description')}></textarea>
             </div>
             <div className="submit-btn">
-                <Button 
-                    name={'Add Expense'}
+                <Button
+                    name={showSadFace ? <span>{plus} {sadFace}</span> : 'Add Expense'} // Display sad face emoji if showSadFace is true
                     icon={plus}
                     bPad={'.8rem 1.6rem'}
                     bRad={'30px'}
-                    bg={'var(--color-accent'}
+                    bg={showSadFace ? 'rgba(220, 20, 60, 0.2)' : 'var(--color-accent)'} // Change background color if showSadFace is true
                     color={'#fff'}
                 />
             </div>
@@ -97,51 +101,51 @@ function ExpenseForm() {
     )
 }
 
-
 const ExpenseFormStyled = styled.form`
+display: flex;
+flex-direction: column;
+gap: 2rem;
+input, textarea, select{
+    font-family: inherit;
+    font-size: inherit;
+    outline: none;
+    border: none;
+    padding: .5rem 1rem;
+    border-radius: 5px;
+    border: 2px solid #fff;
+    background: transparent;
+    resize: none;
+    box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
+    color: rgba(34, 34, 96, 0.9);
+    &::placeholder{
+        color: rgba(34, 34, 96, 0.4);
+    }
+}
+.input-control{
+    input{
+        width: 100%;
+    }
+}
+
+.selects{
     display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    input, textarea, select{
-        font-family: inherit;
-        font-size: inherit;
-        outline: none;
-        border: none;
-        padding: .5rem 1rem;
-        border-radius: 5px;
-        border: 2px solid #fff;
-        background: transparent;
-        resize: none;
+    justify-content: flex-end;
+    select{
+        color: rgba(34, 34, 96, 0.4);
+        &:focus, &:active{
+            color: rgba(34, 34, 96, 1);
+        }
+    }
+}
+
+.submit-btn{
+    button{
         box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
-        color: rgba(34, 34, 96, 0.9);
-        &::placeholder{
-            color: rgba(34, 34, 96, 0.4);
+        &:hover{
+            background: var(--color-green) !important;
         }
     }
-    .input-control{
-        input{
-            width: 100%;
-        }
-    }
-
-    .selects{
-        display: flex;
-        justify-content: flex-end;
-        select{
-            color: rgba(34, 34, 96, 0.4);
-            &:focus, &:active{
-                color: rgba(34, 34, 96, 1);
-            }
-        }
-    }
-
-    .submit-btn{
-        button{
-            box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
-            &:hover{
-                background: var(--color-green) !important;
-            }
-        }
-    }
+}
 `;
-export default ExpenseForm
+
+export default ExpenseForm;
