@@ -45,3 +45,6 @@ The Expense Tracker Application is a web-based platform designed to help users m
    - For the backend, run `npm start` in the `backend` directory.
 
 6. Access the application at `http://localhost:3000`.
+
+## Deployed URL  
+https://sparkly-hotteok-c4f6b6.netlify.app/
